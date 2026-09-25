@@ -1,0 +1,193 @@
+.srazvi-home-hero {
+  --srazvi-home-hero-green-deep: #0b3d2a;
+  --srazvi-home-hero-green-button: #0b5a3c;
+  --srazvi-home-hero-ink: #1f4d3a;
+  --srazvi-home-hero-line: rgba(11, 61, 42, 0.12);
+
+  position: relative;
+  display: grid;
+  min-height: calc(100vh - 70px);
+  min-height: calc(100svh - 70px);
+  max-width: 1280px;
+  gap: 0;
+  margin: 0 auto;
+  padding: 40px 32px;
+  overflow: hidden;
+  color: var(--srazvi-home-hero-ink);
+  background: var(--color-cream);
+  grid-template-columns: 1.05fr 1fr;
+  align-items: center;
+}
+
+.srazvi-home-hero__copy {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 40px;
+}
+
+.srazvi-home-hero__badge {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 26px;
+  color: var(--srazvi-home-hero-ink);
+  font-size: 16px;
+}
+
+.srazvi-home-hero__badge svg {
+  width: 22px;
+  height: 22px;
+  color: var(--color-sraz);
+}
+
+.srazvi-home-hero__badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-vi);
+}
+
+.srazvi-home-hero__headline {
+  color: var(--srazvi-home-hero-green-deep);
+  font-family: "Fraunces", "Playfair Display", serif;
+  font-size: clamp(42px, 5.6vw, 76px);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+}
+
+.srazvi-home-hero__rule {
+  width: 76px;
+  height: 2px;
+  margin: 26px 0 28px;
+  border: 0;
+  background: var(--color-vi);
+}
+
+.srazvi-home-hero__lead {
+  max-width: 640px;
+  color: var(--srazvi-home-hero-ink);
+  font-size: clamp(17px, 1.6vw, 22px);
+  line-height: 1.55;
+}
+
+.srazvi-home-hero__scroll {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 44px;
+  color: var(--srazvi-home-hero-ink);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.srazvi-home-hero__scroll:hover {
+  opacity: 1;
+}
+
+.srazvi-home-hero__mouse {
+  display: grid;
+  justify-items: center;
+  width: 22px;
+  height: 34px;
+  padding-top: 6px;
+  border: 1.5px solid currentColor;
+  border-radius: 12px;
+}
+
+.srazvi-home-hero__mouse span {
+  width: 3px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--color-vi);
+  animation: srazvi-scroll-cue 1.6s ease-in-out infinite;
+}
+
+@keyframes srazvi-scroll-cue {
+  0% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+.srazvi-home-hero__sprig {
+  position: absolute;
+  bottom: 96px;
+  left: 36%;
+  z-index: 0;
+  width: 190px;
+  max-width: 16vw;
+  color: var(--color-vi);
+  pointer-events: none;
+}
+
+.srazvi-home-hero__sprig-sway {
+  transform-box: fill-box;
+  transform-origin: 10% 100%;
+  animation: srazvi-sway 7s ease-in-out 2.4s infinite;
+}
+
+@keyframes srazvi-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-2.5deg); }
+}
+
+.srazvi-home-hero__photo {
+  position: relative;
+  z-index: 1;
+  margin-left: -60px;
+}
+
+.srazvi-home-hero__photo img {
+  display: block;
+  width: 100%;
+  max-height: calc(100svh - 110px);
+  height: auto;
+  object-fit: contain;
+  object-position: right center;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.srazvi-home-hero__photo:hover img {
+  transform: scale(1.03);
+}
+
+@media (max-width: 960px) {
+  .srazvi-home-hero {
+    min-height: auto;
+    padding-top: 32px;
+    grid-template-columns: 1fr;
+  }
+
+  .srazvi-home-hero__photo {
+    max-width: 520px;
+    margin: 24px auto 0;
+  }
+
+  .srazvi-home-hero__photo img {
+    max-height: none;
+  }
+
+  .srazvi-home-hero__copy {
+    padding-bottom: 20px;
+  }
+
+  .srazvi-home-hero__sprig {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .srazvi-home-hero__photo img {
+    transition: none;
+  }
+}
