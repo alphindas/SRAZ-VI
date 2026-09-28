@@ -1,10 +1,9 @@
 import { useRef, useState } from 'react'
 import { AnimatePresence, motion, useInView } from 'framer-motion'
-import { FAQ, FEATURES, FOUNDER, SIZE_GUIDE } from '../data'
-import { Button, Icon, PageIntro, SampleTag } from '../components/ui'
-import { PatternBg, SHADES, SkirtArt } from '../components/art'
-import { Accordion, EASE, Modal, Reveal, TextReveal, Tilt } from '../components/fx'
-
+import { FAQ, FEATURES, FOUNDER } from '../data'
+import { Button, Icon, PageIntro } from '../components/ui'
+import { PatternBg } from '../components/art'
+import { Accordion, EASE, Modal, Reveal, TextReveal } from '../components/fx'
 /* ------------------------------------------------------------ flash cards */
 
 function FlashCard({ f, i, onOpen }) {
@@ -132,91 +131,7 @@ function Features() {
   )
 }
 
-/* ------------------------------------------------------------ shades + size guide */
 
-function Shades() {
-  const [s, setS] = useState(0)
-  const [guide, setGuide] = useState(false)
-  return (
-    <section className="relative overflow-hidden bg-sraz-deep text-cream">
-      <PatternBg id="shade-pat" opacity={0.1} />
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:grid-cols-2 md:py-24">
-        <Reveal from="left" scale>
-          <Tilt max={6} className="mx-auto max-w-sm rounded-[2rem] bg-cream p-8">
-            <SkirtArt color={SHADES[s].color} className="mx-auto h-auto w-full max-w-[260px]" />
-          </Tilt>
-        </Reveal>
-        <Reveal from="right">
-          <p className="text-sm text-vi-soft">Skin-tone range</p>
-          <h2 className="mt-2 font-display text-3xl md:text-5xl">Disappears under any saree.</h2>
-          <p className="mt-4 max-w-md text-cream/75">
-            Four shades, picked to vanish under chiffon, georgette and silk. Choose one to see it.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4" role="radiogroup" aria-label="Shade">
-            {SHADES.map((sh, i) => (
-              <button
-                key={sh.name}
-                role="radio"
-                aria-checked={s === i}
-                onClick={() => setS(i)}
-                className="group flex flex-col items-center gap-2 text-xs"
-              >
-                <span className="relative grid h-14 w-14 place-items-center">
-                  {s === i && (
-                    <motion.span layoutId="shade-ring" className="absolute inset-0 rounded-full border-2 border-vi" />
-                  )}
-                  <span
-                    className="h-10 w-10 rounded-full ring-1 ring-cream/30 transition-transform group-hover:scale-110"
-                    style={{ background: sh.color }}
-                  />
-                </span>
-                <span className={s === i ? 'text-vi-soft' : 'text-cream/60'}>{sh.name}</span>
-              </button>
-            ))}
-          </div>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Button variant="gold" onClick={() => setGuide(true)} magnetic>
-              <Icon name="ruler" className="h-4 w-4" /> Size guide
-            </Button>
-            <Button variant="light" href="#/contact" magnetic>
-              Reserve your shade
-            </Button>
-          </div>
-        </Reveal>
-      </div>
-
-      <Modal open={guide} onClose={() => setGuide(false)} title="Size guide">
-        <h3 className="font-display text-3xl text-sraz">Size guide</h3>
-        <p className="mt-2 text-sm text-ink/65">Measurements in inches. Between two sizes? Pick the larger one.</p>
-        <SampleTag className="mt-3" />
-        <table className="mt-6 w-full text-left text-sm">
-          <thead>
-            <tr className="border-b border-sraz/15 text-ink/60">
-              <th className="py-2 font-medium">Size</th>
-              <th className="py-2 font-medium">Waist</th>
-              <th className="py-2 font-medium">Hip</th>
-            </tr>
-          </thead>
-          <tbody>
-            {SIZE_GUIDE.map((r, i) => (
-              <motion.tr
-                key={r.size}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.15 + i * 0.06 }}
-                className="border-b border-sraz/10"
-              >
-                <td className="py-3 font-display text-lg text-sraz">{r.size}</td>
-                <td className="py-3">{r.waist}</td>
-                <td className="py-3">{r.hip}</td>
-              </motion.tr>
-            ))}
-          </tbody>
-        </table>
-      </Modal>
-    </section>
-  )
-}
 
 /* ------------------------------------------------------------ page */
 
@@ -229,7 +144,7 @@ export default function About() {
       </PageIntro>
 
       <Features />
-      <Shades />
+      
 
       <section className="mx-auto max-w-6xl px-6 py-16 md:py-24" aria-labelledby="founder-h">
         <div className="grid gap-12 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
