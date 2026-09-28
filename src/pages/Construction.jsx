@@ -96,7 +96,7 @@ const MODEL_HEIGHT = 4.25
 const TAU = Math.PI * 2
 
 function modelUrl(file) {
-  return `https://raw.githubusercontent.com/alphindas/SRAZ-VI/main/model-assets/${file}`
+  return `/models/${file}`
 }
 
 function clamp(value, min = 0, max = 1) {
