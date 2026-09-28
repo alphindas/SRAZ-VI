@@ -178,7 +178,7 @@ export default function Home() {
     <>
       <Hero />
 
-      <div className="border-y border-vi/30 bg-sraz-deep py-5 font-display text-2xl italic text-cream md:text-3xl">
+      <div className="border-y border-vi/30 bg-sraz-deep py-3 font-display text-lg italic text-cream md:text-2xl">
         <Marquee items={MARQUEE} />
       </div>
 
