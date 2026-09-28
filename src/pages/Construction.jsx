@@ -116,11 +116,6 @@ function storyStatus(progress, index, count) {
   return { local, opacity: Math.min(entered, exited) }
 }
 
-function angleVisibility(angle, [start, end]) {
-  const fade = 12
-  return Math.min(smoothstep(start - fade, start + fade, angle), 1 - smoothstep(end - fade, end + fade, angle))
-}
-
 class ModelErrorBoundary extends Component {
   constructor(props) {
     super(props)
@@ -164,31 +159,6 @@ function CanvasLoader() {
     <Html center>
       <div className="rounded-full border border-sraz/10 bg-cream/95 px-4 py-2 text-xs font-medium text-sraz shadow-sm">
         Preparing product view…
-      </div>
-    </Html>
-  )
-}
-
-function StoryCallout({ callout, index, count, scrollProgress }) {
-  const labelRef = useRef(null)
-
-  useFrame(() => {
-    const { local, opacity } = storyStatus(scrollProgress.get(), index, count)
-    const calloutOpacity = opacity * angleVisibility((local * 360) % 360, callout.angleRange)
-    if (labelRef.current) {
-      labelRef.current.style.opacity = calloutOpacity.toFixed(3)
-      labelRef.current.style.transform = `translateY(${(1 - calloutOpacity) * 8}px)`
-    }
-  })
-
-  return (
-    <Html position={callout.position} center distanceFactor={8} zIndexRange={[10, 0]}>
-      <div
-        ref={labelRef}
-        className="pointer-events-none whitespace-nowrap rounded-full border border-sraz/15 bg-cream/95 px-3 py-1.5 text-[10px] font-medium tracking-wide text-sraz shadow-sm backdrop-blur-sm md:text-xs"
-      >
-        <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-vi align-middle" />
-        {callout.text}
       </div>
     </Html>
   )
@@ -269,15 +239,6 @@ function StoryModel({ item, index, count, scrollProgress }) {
           <primitive object={object} />
         </Center>
       </group>
-      {item.callouts.map((callout) => (
-        <StoryCallout
-          key={callout.text}
-          callout={callout}
-          index={index}
-          count={count}
-          scrollProgress={scrollProgress}
-        />
-      ))}
     </group>
   )
 }
@@ -329,6 +290,56 @@ function StaticProductView({ item, reducedMotion }) {
   )
 }
 
+function CalloutRail({ callouts, revealed, fileKey }) {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-10">
+      <AnimatePresence>
+        {callouts.map((c, i) => {
+          if (i >= revealed) return null
+          const latest = i === revealed - 1
+          const y = Math.min(88, Math.max(12, 50 - (c.position[1] / MODEL_HEIGHT) * 94))
+          return (
+            <motion.div
+              key={`${fileKey}-${c.text}`}
+              initial={{ opacity: 0, x: -32, y: '-50%' }}
+              animate={{ opacity: latest ? 1 : 0.55, x: 0, y: '-50%' }}
+              exit={{ opacity: 0, x: -24, y: '-50%' }}
+              transition={{ duration: 0.6, ease: EASE }}
+              className={`absolute left-[2%] w-[46%] items-center ${latest ? 'flex' : 'hidden lg:flex'}`}
+              style={{ top: `${y}%` }}
+            >
+              <div className="max-w-[9rem] shrink-0 pr-3 lg:max-w-[14rem] lg:pr-4">
+                <span className="mb-1 flex items-center gap-2 text-[10px] tracking-[0.3em] text-vi">
+                  <span className="h-px w-5 bg-vi/60" />
+                  0{i + 1}
+                </span>
+                <span className="block font-display text-base italic leading-tight text-sraz lg:text-xl">
+                  {c.text}
+                </span>
+              </div>
+              <motion.span
+                className="hidden h-px flex-1 origin-left bg-gradient-to-r from-vi/10 via-vi/60 to-vi lg:block"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 0.35, duration: 0.7, ease: EASE }}
+              />
+              <motion.span
+                className="relative hidden h-2 w-2 shrink-0 lg:block"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.9, duration: 0.4, ease: EASE }}
+              >
+                <span className="absolute inset-0 animate-ping rounded-full bg-vi/50" />
+                <span className="absolute inset-0 rounded-full bg-vi" />
+              </motion.span>
+            </motion.div>
+          )
+        })}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 function ModelStory() {
   const wrapperRef = useRef(null)
   const reducedMotion = useReducedMotion()
@@ -337,6 +348,7 @@ function ModelStory() {
   const [availableModels, setAvailableModels] = useState(null)
   const [active, setActive] = useState(0)
   const [visibleIndexes, setVisibleIndexes] = useState([0])
+  const [revealed, setRevealed] = useState(0)
   const { scrollYProgress } = useScroll({ target: wrapperRef, offset: ['start start', 'end end'] })
   const models = availableModels ?? MODEL_STORY
 
@@ -391,6 +403,12 @@ function ModelStory() {
     setVisibleIndexes((current) =>
       current.length === nextVisible.length && current.every((index, i) => index === nextVisible[i]) ? current : nextVisible,
     )
+    const list = models[next]?.callouts ?? []
+    const hidden = next < models.length - 1 && withinSegment > 0.85
+    const angle = withinSegment * 360
+    let count = 0
+    if (!hidden) list.forEach((c, i) => { if (angle >= c.angleRange[0] - 8) count = i + 1 })
+    setRevealed(count)
   })
 
   const handleModelError = useCallback((file) => {
@@ -421,6 +439,12 @@ function ModelStory() {
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div className="mx-auto grid h-full max-w-7xl items-center px-6 py-7 lg:grid-cols-[minmax(0,1.9fr)_minmax(18rem,0.8fr)] lg:gap-4 lg:px-10">
           <div className="relative h-[58svh] min-h-[22rem] lg:h-[75vh]" aria-hidden="true">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,#fffaf2_0%,transparent_65%)]" />
+            <div className="pointer-events-none absolute inset-0 grid place-items-center">
+              <div className="h-[94%] w-[60%] max-w-[26rem] rounded-t-[999px] rounded-b-3xl border border-vi/40 bg-gradient-to-b from-sand/60 to-transparent" />
+            </div>
+            <div className="pointer-events-none absolute inset-x-0 bottom-[3%] mx-auto h-5 w-1/2 rounded-[50%] bg-sraz/20 blur-xl" />
+            <CalloutRail callouts={current?.callouts ?? []} revealed={revealed} fileKey={current?.file} />
             {showCanvas ? (
               <WebGLErrorBoundary onError={() => setCanvasFailed(true)}>
                 <ProductCanvas
@@ -437,8 +461,8 @@ function ModelStory() {
             )}
           </div>
 
-          <div className="self-end pb-4 lg:self-center lg:pb-0">
-            <p className="text-sm text-vi">Product construction</p>
+<div className="self-end pb-4 lg:self-center lg:pb-0">
+            <p className="text-sm text-vi">Product construction · 0{active + 1} / 0{models.length}</p>
             <h2 id="product-story-h" className="mt-2 font-display text-3xl text-sraz md:text-5xl">
               {current?.title}
             </h2>
