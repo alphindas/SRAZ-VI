@@ -510,7 +510,7 @@ export function BeforeAfter({ left, right, leftLabel, rightLabel, className = ''
       <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-sraz px-3 py-1 text-xs font-medium text-cream shadow">
         {leftLabel}
       </span>
-      <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-sraz px-3 py-1 text-xs font-medium text-cream shadow">
+      <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-[#8a3346] px-3 py-1 text-xs font-medium text-cream shadow">
         {rightLabel}
       </span>
       <div className="pointer-events-none absolute inset-y-0 w-[3px] -translate-x-1/2 bg-vi" style={{ left: `${pos}%` }} />
