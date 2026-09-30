@@ -8,7 +8,7 @@ export const CONTACT = {
   name: 'Sravani Reddy',
   phone: '9652151932',
   phoneDisplay: '+91 96521 51932',
-  email: 'connect@srazvi.com',
+  email: 'connect@srazvi.co.in',
   address: '', // TODO: client to provide
 }
 
@@ -139,7 +139,7 @@ export const PROOF = [
   { value: '6', label: 'Engineered features' },
 ]
 
-export const MARQUEE = ['Comfort', 'Fit', 'Movement', 'No roll', 'No ride-up', 'Breathable']
+export const MARQUEE = ['Comfort', 'Fit', 'Movement free', 'No roll', 'No ride-up', 'Breathable']
 
 export const FAQ = [
   {

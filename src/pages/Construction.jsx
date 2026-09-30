@@ -75,7 +75,7 @@ const MODEL_STORY = [
     fallback: oursImg,
     callouts: [
       { text: 'Wide bonded waistband', angleRange: [22, 102], position: [1.42, 0.8, 0.25] },
-      { text: 'Anti-slide support', angleRange: [132, 210], position: [-1.45, 0.35, 0.3] },
+      { text: 'Anti-ride up support', angleRange: [132, 210], position: [-1.45, 0.35, 0.3] },
       { text: 'Easy-movement side slit', angleRange: [244, 328], position: [1.35, -1.3, 0.25] },
     ],
   },
