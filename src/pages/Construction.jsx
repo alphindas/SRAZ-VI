@@ -15,7 +15,7 @@ import { PatternBg, SKIRT } from '../components/art'
 import { BeforeAfter, EASE, Img, Reveal, TextReveal } from '../components/fx'
 import graceImg from '../assets/grace-in-every-step.webp'
 import oursImg from '../assets/srazvi-shapewear.webp'
-import otherImg from '../assets/other-shapewear.webp'
+import otherImg from '../assets/other-shapewear-green.webp'
 
 /* ------------------------------------------------------------ drag comparison */
 
