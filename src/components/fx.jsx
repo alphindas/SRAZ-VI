@@ -507,10 +507,16 @@ export function BeforeAfter({ left, right, leftLabel, rightLabel, className = ''
       <div className="pointer-events-none absolute inset-0" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
         {left}
       </div>
-      <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-sraz px-3 py-1 text-xs font-medium text-cream shadow">
+      <span
+        className="pointer-events-none absolute left-4 top-4 rounded-full bg-sraz px-3 py-1 text-xs font-medium text-cream shadow transition-opacity duration-200"
+        style={{ opacity: pos > 12 ? 1 : 0 }}
+      >
         {leftLabel}
       </span>
-      <span className="pointer-events-none absolute right-4 top-4 rounded-full bg-[#8a3346] px-3 py-1 text-xs font-medium text-cream shadow">
+      <span
+        className="pointer-events-none absolute right-4 top-4 rounded-full bg-sraz px-3 py-1 text-xs font-medium text-cream shadow transition-opacity duration-200"
+        style={{ opacity: pos < 88 ? 1 : 0 }}
+      >
         {rightLabel}
       </span>
       <div className="pointer-events-none absolute inset-y-0 w-[3px] -translate-x-1/2 bg-vi" style={{ left: `${pos}%` }} />
