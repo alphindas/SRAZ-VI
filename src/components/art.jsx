@@ -65,7 +65,7 @@ export const SKIRT = {
   bandStitch: 'M108 72H192M106 86H194',
   panels: Array.from({ length: 8 }, (_, i) => `M${110 + i * 11.4} 100V${196 + Math.abs(3.5 - i) * 2}`).join(''),
   panelEdge: 'M84 200Q150 214 216 200',
-  grip: 'M92 300Q150 312 208 300L206 318Q150 330 94 318Z',
+  grip: 'M84 196Q150 210 216 196L214 212Q150 226 86 212Z',
   slit: 'M204 372L226 450H212Z',
 }
 

@@ -492,7 +492,7 @@ function ModelStory() {
 
 /* ------------------------------------------------------------ pinned build diagram */
 
-const STEP_POINT = { band: [150, 79], panel: [150, 150], grip: [150, 312], slit: [216, 420] }
+const STEP_POINT = { band: [150, 79], panel: [150, 150], grip: [150, 312], slit: [175, 190] }
 
 function BuildDiagram({ step }) {
   const on = (k) => step >= k
@@ -529,8 +529,8 @@ function BuildDiagram({ step }) {
       <motion.path d={SKIRT.panelEdge} stroke="#9ff5d3" fill="none" initial={false} animate={draw(1)} transition={t} />
       <g clipPath="url(#build-clip)">
         <motion.path d={SKIRT.grip} fill="#c8922a" stroke="#c8922a" initial={false} animate={{ ...draw(2), fillOpacity: on(2) ? 0.9 : 0 }} transition={t} />
+        <motion.path d={SKIRT.slit} fill="#0f4a33" stroke="#c8922a" strokeWidth="2" initial={false} animate={draw(3)} transition={t} />
       </g>
-      <motion.path d={SKIRT.slit} fill="#0f4a33" stroke="#c8922a" strokeWidth="2" initial={false} animate={draw(3)} transition={t} />
 
       <motion.g initial={false} animate={{ x: px, y: py }} transition={{ type: 'spring', stiffness: 120, damping: 18 }}>
         <circle r="14" fill="none" stroke="#f1dfb8" strokeWidth="1.5" className="build-pulse" />

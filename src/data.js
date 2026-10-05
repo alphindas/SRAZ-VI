@@ -35,13 +35,13 @@ export const FEATURES = [
   },
   {
     icon: 'breathe',
-    title: 'Ultra-breathable',
+    title: 'Breathable',
     text: 'Advanced airflow fabric keeps you comfortable through long pujas and longer weddings.',
     more: 'A lightweight, breathable knit lets heat escape instead of trapping it under silk, so you stay fresh from the morning muhurtham to the late reception.',
   },
   {
     icon: 'move',
-    title: 'Movement-friendly',
+    title: '4-Way Stretchable',
     text: 'Maximum stretch for effortless walking, sitting and dancing.',
     more: 'Four-way stretch follows every movement, from sitting cross-legged on the floor to the sangeet dance floor, without pulling or pinching.',
   },
@@ -100,7 +100,7 @@ export const BUILD_STEPS = [
   },
   {
     key: 'grip',
-    title: 'Anti-slide grip band',
+    title: 'Anti-ride grip band',
     text: 'A silicone grip band sits at the thigh so the hem stays put, step after step.',
   },
   {
