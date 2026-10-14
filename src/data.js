@@ -67,11 +67,11 @@ export const FEATURES = [
 
 export const FOUNDER = {
   quote:
-    'Sarees look effortless. The shapewear underneath never was. After 39 trials and seven months of construction work, SRAZVI became the fix.',
+    'Why do we compromise on basic comfort just to wear a saree?',
   paragraphs: [
-    'It started on an ordinary pooja morning. Saree draped, family waiting, and us tugging at the shapewear underneath every ten minutes. It rolled down at the waist. It rode up at the thigh. By noon we were thinking about the garment, not the festival.',
-    'It began as a passing thought: why does the one thing meant to support a saree keep letting it down? So we started asking. Friends, cousins, colleagues, women at functions. The answer was the same almost every time.',
-    'We turned those conversations into a survey, and the pattern was impossible to ignore. So we stopped adjusting existing products and started engineering one. Thirty-nine trials later, SRAZVI is the piece we wished we had that morning.',
+    'Like many modern women, I only wore sarees occasionally. But one festive day changed everything.',
+    'Trapped in a popular saree shapewear, I spent the entire event fighting a waistband that left marks and kept rolling down little by little. The shapewear also kept riding up under the saree, and I was unable to adjust it in a full crowd. When my sister confessed she was suffering through the exact same thing, a casual joke turned into a serious question: Why do we compromise on basic comfort just to wear a saree?',
+    'Determined to find a solution, I interacted with 100+ saree wearers and wear-tested dozens of brands on the market. After 12 months of R&D and 39 trials, I decided to launch my own brand as the solution.',
   ],
   sign: 'Founder, SRAZVI',
 }
