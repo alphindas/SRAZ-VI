@@ -16,7 +16,7 @@ import {
   useScroll,
   useSpring,
 } from 'framer-motion'
-import { LogoMark } from './logo'
+import logoImg from '../assets/srazvi-logo.png'
 
 export const EASE = [0.22, 1, 0.36, 1]
 
@@ -657,7 +657,14 @@ export function Loader() {
           aria-hidden="true"
         >
           <div className="flex flex-col items-center">
-            <LogoMark animated className="h-16 w-auto md:h-20" />
+            <motion.img
+              src={logoImg}
+              alt=""
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: EASE }}
+              className="h-16 w-auto md:h-20"
+            />
             <div className="mt-6 h-[2px] w-40 overflow-hidden rounded bg-sraz/10">
               <motion.div
                 className="h-full bg-vi"

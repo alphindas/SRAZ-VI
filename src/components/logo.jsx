@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion'
+import logoImg from '../assets/srazvi-logo.png'
+import logoLightImg from '../assets/srazvi-logo-light.png'
 
 /**
  * SRAZVI® wordmark: green "SRAZ" with a gold "VI" set tight against the Z (no gap).
@@ -76,7 +78,7 @@ export function Logo({ light = false, className = '' }) {
       aria-label="SRAZVI, home"
       className={`inline-flex items-center select-none transition-opacity hover:opacity-85 ${className}`}
     >
-      <LogoMark light={light} />
+      <img src={light ? logoLightImg : logoImg} alt="SRAZVI" className="block h-10 w-auto" />
     </a>
   )
 }
