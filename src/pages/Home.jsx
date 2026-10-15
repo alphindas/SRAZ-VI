@@ -110,7 +110,7 @@ function Hero() {
         <TextReveal text="India's first anti‑ride saree shapewear." delay={0.2} className="srazvi-home-hero__headline" />
         <motion.hr {...enter(0.7)} className="srazvi-home-hero__rule" />
         <motion.p {...enter(0.85)} className="srazvi-home-hero__lead">
-          SRAZVI ends waistband rolling and thigh ride-up — engineered over seven months of
+          SRAZVI ends waistband rolling and thigh ride-up — engineered over 12 months of
           construction R&amp;D, not just stitched together.
         </motion.p>
 

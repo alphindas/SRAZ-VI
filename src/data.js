@@ -134,7 +134,7 @@ export const MARKET = {
 // Numbers shown with a count-up animation on the home page (all from the story above).
 export const PROOF = [
   { value: '39', label: 'Product trials' },
-  { value: '7', label: 'Months of construction R&D' },
+  { value: '12', label: 'Months of construction R&D' },
   { value: '4', label: 'Skin-tone shades' },
   { value: '6', label: 'Engineered features' },
 ]
