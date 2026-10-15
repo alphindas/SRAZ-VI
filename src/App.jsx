@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ROUTES, ROUTE_ALIASES } from './data'
 import { Header, Footer, StickyCTA } from './components/Layout'
 import { CustomCursor, EASE, Loader, ScrollProgress, ToastProvider } from './components/fx'
 import Home from './pages/Home'
 import About from './pages/About'
-import Construction from './pages/Construction'
 import Opportunity from './pages/Opportunity'
 import Contact from './pages/Contact'
+
+const Construction = lazy(() => import('./pages/Construction'))
 
 const PAGES = {
   '/': Home,
@@ -69,7 +70,9 @@ export default function App() {
           transition={{ duration: 0.4, ease: EASE }}
           className="outline-none"
         >
-          <Page />
+          <Suspense fallback={null}>
+            <Page />
+          </Suspense>
         </motion.main>
       </AnimatePresence>
       <StickyCTA path={known} />

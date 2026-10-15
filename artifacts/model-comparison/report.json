@@ -1,0 +1,28 @@
+[
+  {
+    "site": "before-live",
+    "heading": "Other shapewear",
+    "captures": [
+      "D:\\srazvi-website-source\\srazvi-source\\artifacts\\model-comparison\\before-live-over-the-drape.png",
+      "D:\\srazvi-website-source\\srazvi-source\\artifacts\\model-comparison\\before-live-under-the-drape.png",
+      "D:\\srazvi-website-source\\srazvi-source\\artifacts\\model-comparison\\before-live-other-shapewear.png"
+    ],
+    "browserErrors": [
+      "warning: THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+      "exception: Uncaught"
+    ]
+  },
+  {
+    "site": "after-local",
+    "heading": "Other shapewear",
+    "captures": [
+      "D:\\srazvi-website-source\\srazvi-source\\artifacts\\model-comparison\\after-local-over-the-drape.png",
+      "D:\\srazvi-website-source\\srazvi-source\\artifacts\\model-comparison\\after-local-under-the-drape.png",
+      "D:\\srazvi-website-source\\srazvi-source\\artifacts\\model-comparison\\after-local-other-shapewear.png"
+    ],
+    "browserErrors": [
+      "warning: THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+      "exception: Uncaught"
+    ]
+  }
+]

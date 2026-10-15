@@ -1,6 +1,6 @@
 import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Bounds, Center, Html, useGLTF } from '@react-three/drei'
+import { Bounds, Center, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import {
   AnimatePresence,
@@ -108,6 +108,22 @@ function smoothstep(start, end, value) {
   return t * t * (3 - 2 * t)
 }
 
+function useSmallScreen() {
+  const [small, setSmall] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches,
+  )
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 767px)')
+    const update = () => setSmall(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  return small
+}
+
 function storyStatus(progress, index, count) {
   const position = clamp(progress * count, 0, count)
   const local = clamp(position - index)
@@ -154,16 +170,6 @@ class WebGLErrorBoundary extends Component {
   }
 }
 
-function CanvasLoader() {
-  return (
-    <Html center>
-      <div className="rounded-full border border-sraz/10 bg-cream/95 px-4 py-2 text-xs font-medium text-sraz shadow-sm">
-        Preparing product view…
-      </div>
-    </Html>
-  )
-}
-
 function StoryModel({ item, index, count, scrollProgress }) {
   const group = useRef(null)
   const { scene } = useGLTF(modelUrl(item.file))
@@ -176,15 +182,9 @@ function StoryModel({ item, index, count, scrollProgress }) {
       child.receiveShadow = false
       const sourceMaterials = Array.isArray(child.material) ? child.material : [child.material]
       const nextMaterials = sourceMaterials.map((material) => {
-        // The in-app browser's GPU rejects this model's PBR shader. Keeping the
-        // original albedo map on a Lambert material preserves the visual while
-        // using a much smaller, broadly supported shader program.
-        const next = new THREE.MeshLambertMaterial({
-          color: material.color?.clone() ?? new THREE.Color('#d2a47d'),
-          map: material.map,
-          side: material.side,
-          opacity: material.opacity,
-        })
+        // Clone the GLTF material so every model instance can animate opacity
+        // independently while preserving its authored PBR maps and colour space.
+        const next = material.clone()
         // Keep the fully visible model on the normal opaque render path. Rendering
         // every large GLB as transparent overwhelms integrated GPUs and can make
         // the garment disappear against a light canvas.
@@ -243,22 +243,26 @@ function StoryModel({ item, index, count, scrollProgress }) {
   )
 }
 
-function ProductCanvas({ models, visibleIndexes, scrollProgress, onModelError }) {
+function ProductCanvas({ models, visibleIndexes, scrollProgress, failedModels, onModelError, smallScreen }) {
   return (
     <Canvas
       className="!bg-transparent"
       style={{ background: 'transparent' }}
       camera={{ position: [0, 0, 7.4], fov: 32 }}
-      dpr={[1, 2]}
-      gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
+      dpr={smallScreen ? [1, 1] : [1, 2]}
+      gl={{
+        alpha: true,
+        antialias: !smallScreen,
+        powerPreference: smallScreen ? 'default' : 'high-performance',
+      }}
       onCreated={({ gl }) => gl.setClearColor('#fbf6f0', 0)}
     >
       <ambientLight intensity={0.65} />
       <directionalLight position={[3, 5, 5]} intensity={2.25} />
       <directionalLight position={[-4, 1, 3]} intensity={0.5} color="#f6e9d7" />
       <Bounds fit clip observe margin={1.0}>
-        <Suspense fallback={<CanvasLoader />}>
-          {visibleIndexes.map((index) => {
+        <Suspense fallback={null}>
+          {visibleIndexes.filter((index) => !failedModels.has(models[index]?.file)).map((index) => {
             const item = models[index]
             if (!item) return null
             return (
@@ -343,39 +347,21 @@ function CalloutRail({ callouts, revealed, fileKey }) {
 function ModelStory() {
   const wrapperRef = useRef(null)
   const reducedMotion = useReducedMotion()
+  const smallScreen = useSmallScreen()
   const [webgl, setWebgl] = useState(null)
   const [canvasFailed, setCanvasFailed] = useState(false)
-  const [availableModels, setAvailableModels] = useState(null)
+  const [failedModels, setFailedModels] = useState(() => new Set())
   const [active, setActive] = useState(0)
   const [visibleIndexes, setVisibleIndexes] = useState([0])
   const [revealed, setRevealed] = useState(0)
   const { scrollYProgress } = useScroll({ target: wrapperRef, offset: ['start start', 'end end'] })
-  const models = availableModels ?? MODEL_STORY
+  const models = MODEL_STORY
 
   useEffect(() => {
-    let cancelled = false
-    const findAvailableModels = async () => {
-      const checks = await Promise.all(
-        MODEL_STORY.map(async (item) => {
-          try {
-            const response = await fetch(modelUrl(item.file), { method: 'HEAD' })
-            return response.ok ? item : null
-          } catch {
-            return null
-          }
-        }),
-      )
-      if (!cancelled) setAvailableModels(checks.filter(Boolean))
-    }
-    findAvailableModels()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  useEffect(() => {
-    if (availableModels) availableModels.forEach((item) => useGLTF.preload(modelUrl(item.file)))
-  }, [availableModels])
+    if (reducedMotion || !webgl || canvasFailed) return
+    const next = models[active + 1]
+    if (next && !failedModels.has(next.file)) useGLTF.preload(modelUrl(next.file))
+  }, [active, canvasFailed, failedModels, reducedMotion, webgl])
 
   useEffect(() => {
     const canvas = document.createElement('canvas')
@@ -398,7 +384,9 @@ function ModelStory() {
     // short hand-off window. Each supplied model carries a high-detail mesh
     // and two 4K maps, so keeping all three resident in the canvas can exhaust
     // an integrated GPU before any garment is drawn.
-    const nextVisible = withinSegment > 0.8 && next < models.length - 1 ? [next, next + 1] : [next]
+    // Phones keep just the active scene mounted; the next GLB is warmed in the
+    // loader cache above, while desktop retains the existing brief hand-off.
+    const nextVisible = !smallScreen && withinSegment > 0.8 && next < models.length - 1 ? [next, next + 1] : [next]
     setActive((current) => (current === next ? current : next))
     setVisibleIndexes((current) =>
       current.length === nextVisible.length && current.every((index, i) => index === nextVisible[i]) ? current : nextVisible,
@@ -412,7 +400,7 @@ function ModelStory() {
   })
 
   const handleModelError = useCallback((file) => {
-    setAvailableModels((current) => current?.filter((item) => item.file !== file) ?? [])
+    setFailedModels((current) => (current.has(file) ? current : new Set([...current, file])))
   }, [])
 
   const scrollToModel = (index) => {
@@ -425,9 +413,8 @@ function ModelStory() {
     })
   }
 
-  if (availableModels && availableModels.length === 0) return null
   const current = models[active] ?? models[0]
-  const showCanvas = webgl && !canvasFailed && !reducedMotion && availableModels !== null
+  const showCanvas = webgl && !canvasFailed && !reducedMotion && current && !failedModels.has(current.file)
 
   return (
     <section
@@ -451,7 +438,9 @@ function ModelStory() {
                   models={models}
                   visibleIndexes={visibleIndexes}
                   scrollProgress={scrollYProgress}
+                  failedModels={failedModels}
                   onModelError={handleModelError}
+                  smallScreen={smallScreen}
                 />
               </WebGLErrorBoundary>
             ) : current ? (

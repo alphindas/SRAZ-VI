@@ -11,7 +11,7 @@ import {
   Reveal,
   TextReveal,
 } from '../components/fx'
-import heroPhoto from '../assets/hero-photo.png'
+import heroPhoto from '../assets/hero-photo.webp'
 import './home-hero.css'
 
 const enter = (delay) => ({
