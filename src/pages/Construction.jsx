@@ -249,10 +249,10 @@ function ProductCanvas({ models, visibleIndexes, scrollProgress, failedModels, o
       className="!bg-transparent"
       style={{ background: 'transparent' }}
       camera={{ position: [0, 0, 7.4], fov: 32 }}
-      dpr={smallScreen ? [1, 1] : [1, 2]}
+      dpr={[1, 2]}
       gl={{
         alpha: true,
-        antialias: !smallScreen,
+        antialias: true,
         powerPreference: smallScreen ? 'default' : 'high-performance',
       }}
       onCreated={({ gl }) => gl.setClearColor('#fbf6f0', 0)}
