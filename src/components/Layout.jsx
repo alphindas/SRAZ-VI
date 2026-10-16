@@ -129,7 +129,7 @@ export function Footer() {
         <div>
           <Logo light />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream/70">
-            India’s first anti-roll saree shapewear. Engineered over 12 months of construction R&amp;D.
+            India’s first anti-ride saree shapewear. Engineered over 12 months of construction R&amp;D.
           </p>
         </div>
         <nav aria-label="Footer" className="text-sm">

@@ -1,92 +1,73 @@
-import { useRef } from 'react'
-import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { MARKET, SURVEY, REVIEWS } from '../data'
 import { PageIntro } from '../components/ui'
 import { PatternBg } from '../components/art'
-import { Counter, Reveal, TextReveal, Tilt, useCountUp } from '../components/fx'
-
-/**
- * SVG <text> whose number counts up when the graphic scrolls into view.
- * `target` is a normal HTML element (the wrapper div), because Safari/iOS
- * is unreliable at detecting scroll on elements that live inside an SVG.
- */
-function CountText({ value, target, ...props }) {
-  const shown = useCountUp(value, target)
-  return <text {...props}>{shown}</text>
-}
+import { Counter, Reveal, TextReveal, Tilt } from '../components/fx'
 
 function MarketCircles() {
-  const reduce = useReducedMotion()
-  // Watch the plain HTML wrapper (works on iOS), not the SVG parts inside it.
-  const wrap = useRef(null)
-  const inView = useInView(wrap, { once: true, margin: '-80px' })
-  const show = reduce || inView
-
-  // Fade and slide up only. No scaling, because scaling SVG groups is buggy in Safari.
-  const grow = (delay) => ({
-    initial: { opacity: 0, y: 18 },
-    animate: show ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 },
-    transition: reduce ? { duration: 0 } : { duration: 0.8, delay, ease: 'easeOut' },
-  })
+  // Pure CSS fade-in that starts as soon as the graphic is drawn.
+  // No scroll detection and no JavaScript animation, so iOS Safari cannot get it stuck.
+  const fade = (delay) => ({ className: 'mk-fade', style: { animationDelay: `${delay}s` } })
 
   return (
-    <div ref={wrap}>
-      <svg
-        viewBox="0 0 640 470"
-        className="h-auto w-full"
-        role="img"
-        aria-label={`Market map: the ${MARKET.saree.value} saree market contains the ${MARKET.shapewear.value} shapewear market, which contains a ${MARKET.gap.value} gap where shapewear fails under a saree.`}
-      >
-        <defs>
-          <pattern id="mk-jq" width="44" height="44" patternUnits="userSpaceOnUse">
-            <path d="M22 3 41 22 22 41 3 22Z" fill="none" stroke="#c8922a" strokeWidth=".8" />
-            <circle cx="22" cy="22" r="1.8" fill="#c8922a" />
-          </pattern>
-        </defs>
+    <svg
+      viewBox="0 0 640 470"
+      className="h-auto w-full"
+      role="img"
+      aria-label={`Market map: the ${MARKET.saree.value} saree market contains the ${MARKET.shapewear.value} shapewear market, which contains a ${MARKET.gap.value} gap where shapewear fails under a saree.`}
+    >
+      <style>{`
+        .mk-fade { animation: mk-fade-in 0.9s ease-out both; }
+        @keyframes mk-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        @media (prefers-reduced-motion: reduce) { .mk-fade { animation: none; } }
+      `}</style>
+      <defs>
+        <pattern id="mk-jq" width="44" height="44" patternUnits="userSpaceOnUse">
+          <path d="M22 3 41 22 22 41 3 22Z" fill="none" stroke="#c8922a" strokeWidth=".8" />
+          <circle cx="22" cy="22" r="1.8" fill="#c8922a" />
+        </pattern>
+      </defs>
 
-        <motion.g {...grow(0)}>
-          <circle cx="320" cy="235" r="215" fill="#0f4a33" />
-          {/* Pattern is painted straight onto a circle, so no clip-path is needed (Safari-safe). */}
-          <circle cx="320" cy="235" r="215" fill="url(#mk-jq)" fillOpacity=".16" />
-          <circle cx="320" cy="235" r="215" fill="none" stroke="#c8922a" strokeWidth="2" />
-          <text x="320" y="82" textAnchor="middle" fontSize="14" fill="#f1dfb8">
-            {MARKET.saree.label}
-          </text>
-          <CountText target={wrap} value={MARKET.saree.value} x="320" y="122" textAnchor="middle" fontSize="38" fill="#fbf6f0" fontFamily="Playfair Display, Georgia, serif" />
-        </motion.g>
+      <g {...fade(0)}>
+        <circle cx="320" cy="235" r="215" fill="#0f4a33" />
+        <circle cx="320" cy="235" r="215" fill="url(#mk-jq)" fillOpacity=".16" />
+        <circle cx="320" cy="235" r="215" fill="none" stroke="#c8922a" strokeWidth="2" />
+        <text x="320" y="82" textAnchor="middle" fontSize="14" fill="#f1dfb8">
+          {MARKET.saree.label}
+        </text>
+        <text x="320" y="122" textAnchor="middle" fontSize="38" fill="#fbf6f0" fontFamily="Playfair Display, Georgia, serif">
+          {MARKET.saree.value}
+        </text>
+      </g>
 
-        <motion.g {...grow(0.25)}>
-          <circle cx="320" cy="300" r="125" fill="#1a6b4a" stroke="#7fd1ad" strokeOpacity=".6" strokeWidth="1.5" />
-          <text x="320" y="222" textAnchor="middle" fontSize="13" fill="#e8f6ef">
-            {MARKET.shapewear.label}
-          </text>
-          <CountText target={wrap} value={MARKET.shapewear.value} x="320" y="252" textAnchor="middle" fontSize="26" fill="#fbf6f0" fontFamily="Playfair Display, Georgia, serif" />
-        </motion.g>
+      <g {...fade(0.25)}>
+        <circle cx="320" cy="300" r="125" fill="#1a6b4a" stroke="#7fd1ad" strokeOpacity=".6" strokeWidth="1.5" />
+        <text x="320" y="222" textAnchor="middle" fontSize="13" fill="#e8f6ef">
+          {MARKET.shapewear.label}
+        </text>
+        <text x="320" y="252" textAnchor="middle" fontSize="26" fill="#fbf6f0" fontFamily="Playfair Display, Georgia, serif">
+          {MARKET.shapewear.value}
+        </text>
+      </g>
 
-        <motion.g {...grow(0.5)}>
-          {!reduce && (
-            <motion.circle
-              cx="320"
-              cy="345"
-              fill="none"
-              stroke="#f1dfb8"
-              strokeWidth="2"
-              initial={{ r: 62, opacity: 0.7 }}
-              animate={{ r: 84, opacity: 0 }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut' }}
-            />
-          )}
-          <circle cx="320" cy="345" r="62" fill="#c8922a" />
-          <text x="320" y="333" textAnchor="middle" fontSize="13" fontWeight="600" letterSpacing="1" fill="#26221d">
-            {MARKET.gap.label}
-          </text>
-          <CountText target={wrap} value={MARKET.gap.value} x="320" y="360" textAnchor="middle" fontSize="22" fill="#26221d" fontFamily="Playfair Display, Georgia, serif" />
-          <text x="320" y="380" textAnchor="middle" fontSize="10.5" fill="#26221d">
-            rolling and ride-up
-          </text>
-        </motion.g>
-      </svg>
-    </div>
+      <g {...fade(0.5)}>
+        {/* Soft pulse ring, drawn with SVG's own animation, which Safari supports well. */}
+        <circle cx="320" cy="345" r="62" fill="none" stroke="#f1dfb8" strokeWidth="2" opacity=".7">
+          <animate attributeName="r" from="62" to="84" dur="2.4s" repeatCount="indefinite" />
+          <animate attributeName="opacity" from=".7" to="0" dur="2.4s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="320" cy="345" r="62" fill="#c8922a" />
+        <text x="320" y="333" textAnchor="middle" fontSize="13" fontWeight="600" letterSpacing="1" fill="#26221d">
+          {MARKET.gap.label}
+        </text>
+        <text x="320" y="360" textAnchor="middle" fontSize="22" fill="#26221d" fontFamily="Playfair Display, Georgia, serif">
+          {MARKET.gap.value}
+        </text>
+        <text x="320" y="380" textAnchor="middle" fontSize="10.5" fill="#26221d">
+          rolling and ride-up
+        </text>
+      </g>
+    </svg>
   )
 }
 
