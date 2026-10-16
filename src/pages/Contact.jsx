@@ -50,9 +50,11 @@ async function sendForm(subject, data) {
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify(payload),
     })
-    const json = await res.json()
+        const json = await res.json()
+    if (!json.success) console.error('Web3Forms said:', json.message)
     return Boolean(json.success)
-  } catch {
+  } catch (err) {
+    console.error('Send failed:', err)
     return false
   }
 }
