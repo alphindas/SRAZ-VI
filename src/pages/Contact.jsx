@@ -6,7 +6,7 @@ import { EASE, Reveal, ripple, useToast } from '../components/fx'
 
 // 1) Get a free access key at https://web3forms.com (enter the client's email there).
 // 2) Paste it below. This key is safe to keep in website code.
-const WEB3FORMS_KEY = 'PASTE_YOUR_ACCESS_KEY_HERE'
+const WEB3FORMS_KEY = 'a6143ce4-395e-4be4-98e3-dd2d8979a840'
 
 const input =
   'w-full rounded-xl border border-sraz/20 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-sraz focus:ring-2 focus:ring-sraz/20'
