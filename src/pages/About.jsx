@@ -147,18 +147,8 @@ export default function About() {
       
 
       <section className="mx-auto max-w-6xl px-6 py-16 md:py-24" aria-labelledby="founder-h">
-        <div className="grid gap-12 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
-          <Reveal as="figure" from="left">
-            <div className="relative mx-auto aspect-[4/5] w-full max-w-xs overflow-hidden rounded-t-[999px] rounded-b-2xl bg-sraz-deep">
-              <PatternBg id="founder-pat" opacity={0.2} />
-              <div className="absolute inset-0 grid place-items-center">
-                <span className="font-display text-7xl text-vi">S</span>
-              </div>
-            </div>
-            <figcaption className="mt-3 text-center text-xs text-ink/55">Founder portrait: add photo here</figcaption>
-          </Reveal>
-
-          <div>
+        <div className="mx-auto max-w-3xl">
+<div>
             <TextReveal
               as="h2"
               id="founder-h"

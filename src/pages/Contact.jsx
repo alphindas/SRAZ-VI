@@ -4,6 +4,10 @@ import { CONTACT, SURVEY } from '../data'
 import { Icon, PageIntro } from '../components/ui'
 import { EASE, Reveal, ripple, useToast } from '../components/fx'
 
+// 1) Get a free access key at https://web3forms.com (enter the client's email there).
+// 2) Paste it below. This key is safe to keep in website code.
+const WEB3FORMS_KEY = 'PASTE_YOUR_ACCESS_KEY_HERE'
+
 const input =
   'w-full rounded-xl border border-sraz/20 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-sraz focus:ring-2 focus:ring-sraz/20'
 
@@ -24,15 +28,33 @@ function collect(form) {
 }
 
 /**
- * No backend yet: submitting opens the visitor's mail app with the answers filled in,
- * addressed to CONTACT.email. Swap this for a fetch() to Formspree / your API when ready.
+ * Sends the form straight to Web3Forms, which emails it to the client.
+ * The visitor stays on the website. Returns true if it worked, false if not.
  */
-function sendByMail(subject, data) {
-  const body = Object.entries(data)
-    .filter(([, v]) => v)
-    .map(([k, v]) => `${k}: ${v}`)
-    .join('\n')
-  window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+async function sendForm(subject, data) {
+  // Hidden spam-trap: real people never tick it, bots often do.
+  if (data.botcheck) return true
+  delete data.botcheck
+
+  const payload = {
+    access_key: WEB3FORMS_KEY,
+    subject,
+    from_name: 'SRAZVI Website',
+    ...(data.Email ? { replyto: data.Email } : {}),
+    ...data,
+  }
+
+  try {
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    const json = await res.json()
+    return Boolean(json.success)
+  } catch {
+    return false
+  }
 }
 
 const FORMS = {
@@ -181,23 +203,24 @@ const FORMS = {
   },
 }
 
-/** Submit button that morphs into a "Sent" confirmation. */
-function MorphButton({ done, children }) {
+/** Submit button: shows "Sending..." while working, then morphs into a "Sent" confirmation. */
+function MorphButton({ done, sending, children }) {
+  const state = done ? 'done' : sending ? 'sending' : 'idle'
   return (
     <motion.button
       type="submit"
       layout
-      disabled={done}
+      disabled={done || sending}
       onPointerDown={ripple}
       transition={{ layout: { duration: 0.4, ease: EASE } }}
       style={{ borderRadius: 999 }}
       className={`relative inline-flex h-12 items-center justify-center overflow-hidden px-7 text-sm font-medium transition-colors ${
         done ? 'bg-vi text-ink' : 'bg-sraz text-cream hover:bg-sraz-deep'
-      }`}
+      } ${sending ? 'opacity-80' : ''}`}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
-          key={done ? 'done' : 'idle'}
+          key={state}
           layout="position"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -205,13 +228,13 @@ function MorphButton({ done, children }) {
           transition={{ duration: 0.25 }}
           className="inline-flex items-center gap-2"
         >
-          {done ? (
+          {state === 'done' && (
             <>
               <Icon name="check" className="h-4 w-4" /> Sent
             </>
-          ) : (
-            children
           )}
+          {state === 'sending' && 'Sending...'}
+          {state === 'idle' && children}
         </motion.span>
       </AnimatePresence>
     </motion.button>
@@ -223,6 +246,8 @@ function FormPanel({ id }) {
   const toast = useToast()
   const [sent, setSent] = useState(false)
   const [done, setDone] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState(false)
   const timer = useRef(null)
   useEffect(() => () => clearTimeout(timer.current), [])
 
@@ -234,7 +259,7 @@ function FormPanel({ id }) {
         </span>
         <h3 className="mt-4 font-display text-2xl text-sraz">Thank you.</h3>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-ink/70">
-          Your email app should have opened with your answers ready to send. If it didn’t, write to{' '}
+          We have received your details and will get back to you soon. You can also write to us at{' '}
           <a className="text-sraz underline" href={`mailto:${CONTACT.email}`}>
             {CONTACT.email}
           </a>
@@ -256,18 +281,44 @@ function FormPanel({ id }) {
   return (
     <form
       className="space-y-4 rounded-3xl bg-white p-6 ring-1 ring-sraz/10 md:p-8"
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault()
-        sendByMail(f.subject, collect(e.currentTarget))
-        setDone(true)
-        toast('Opening your email app with your answers')
-        timer.current = setTimeout(() => setSent(true), 1200)
+        const form = e.currentTarget
+        setError(false)
+        setSending(true)
+        const ok = await sendForm(f.subject, collect(form))
+        setSending(false)
+        if (ok) {
+          form.reset()
+          setDone(true)
+          toast('Sent. Thank you!')
+          timer.current = setTimeout(() => setSent(true), 1200)
+        } else {
+          setError(true)
+          toast('Could not send. Please try again')
+        }
       }}
     >
       <h3 className="font-display text-2xl text-sraz">{f.title}</h3>
       {f.fields}
+
+      {/* Hidden spam-trap. Leave it here, it is invisible to real visitors. */}
+      <input type="checkbox" name="botcheck" tabIndex={-1} autoComplete="off" style={{ display: 'none' }} />
+
+      {error && (
+        <p role="alert" className="text-sm text-red-700">
+          Something went wrong and your message was not sent. Please try again, or email us at{' '}
+          <a className="underline" href={`mailto:${CONTACT.email}`}>
+            {CONTACT.email}
+          </a>
+          .
+        </p>
+      )}
+
       <div className="pt-2">
-        <MorphButton done={done}>{f.cta}</MorphButton>
+        <MorphButton done={done} sending={sending}>
+          {f.cta}
+        </MorphButton>
       </div>
     </form>
   )

@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { MARKET, SURVEY, REVIEWS } from '../data'
-import { PageIntro, SampleTag } from '../components/ui'
+import { PageIntro } from '../components/ui'
 import { PatternBg } from '../components/art'
 import { Counter, Reveal, TextReveal, Tilt, useCountUp } from '../components/fx'
 
@@ -157,7 +157,6 @@ export default function Opportunity() {
               text="We asked women what goes wrong."
               className="max-w-lg font-display text-3xl text-sraz md:text-4xl"
             />
-            <SampleTag />
           </div>
           <div className="mt-10 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
             <div>
@@ -195,7 +194,6 @@ export default function Opportunity() {
             <p className="text-sm text-vi">Survey</p>
             <h2 className="mt-2 font-display text-3xl text-sraz md:text-4xl">Survey</h2>
           </div>
-          <SampleTag />
         </div>
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {REVIEWS.map((r, i) => (
